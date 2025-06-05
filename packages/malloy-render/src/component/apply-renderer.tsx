@@ -15,6 +15,7 @@ import {renderImage} from './render-image';
 import {Dashboard} from './dashboard/dashboard';
 import {renderTime} from './render-time';
 import {LegacyChart} from './legacy-charts/legacy_chart';
+import {Kpi} from './kpi/kpi';
 import {NULL_SYMBOL} from '../util';
 import type {RendererProps} from './types';
 import {ErrorMessage} from './error-message/error-message';
@@ -63,6 +64,15 @@ export function applyRenderer(props: RendererProps) {
         } else
           renderValue = (
             <ErrorMessage message="Malloy Render: Charts require tabular data" />
+          );
+        break;
+      }
+      case 'kpi': {
+        if (dataColumn.isRepeatedRecord()) {
+          renderValue = <Kpi data={dataColumn} {...propsToPass} />;
+        } else
+          renderValue = (
+            <ErrorMessage message="Malloy Render: KPI requires tabular data" />
           );
         break;
       }

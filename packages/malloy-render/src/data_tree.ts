@@ -321,6 +321,7 @@ export function shouldRenderAs(
   if (vizType) {
     if (vizType === 'table') return 'table';
     if (vizType === 'dashboard') return 'dashboard';
+    if (vizType === 'kpi') return 'kpi';
     if (VIZ_CHART_TYPES.includes(vizType)) return 'chart';
     // Handle other viz types if needed in the future
   }

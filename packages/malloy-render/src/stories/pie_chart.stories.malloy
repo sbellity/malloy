@@ -9,39 +9,68 @@ source: products is duckdb.table("static/data/products.parquet") extend {
   measure: total_sales is retail_price.sum()
   measure: avg_margin is avg(retail_price - cost)
   measure: product_count is count()
+  measure: total_cost is cost.sum()
+  measure: avg_price is retail_price.avg()
 
+  # Basic pie chart - auto-detected fields
   #(story)
   # pie_chart
-  view: sales_by_brand is {
+  view: basic_sales_by_brand is {
     group_by: brand
     aggregate: total_sales
     limit: 10
   }
 
+  # Pie chart with explicit field mapping
+  #(story)
+  # pie_chart { category=category value=total_sales }
+  view: explicit_category_value is {
+    group_by: category
+    aggregate: 
+      total_sales
+      product_count
+    limit: 8
+  }
+
+  # Small/spark pie chart
+  #(story)
+  # pie_chart { size=spark }
+  view: spark_pie_chart is {
+    group_by: department
+    aggregate: total_sales
+    limit: 5
+  }
+
+  # Pie chart with embedded field tags
+  #(story)
+  # pie_chart
+  view: embedded_tags_example is {
+    group_by: brand # category
+    aggregate: 
+      revenue is total_sales # value
+      items is product_count
+    limit: 8
+  }
+
+  # Large dataset pie chart
   #(story)
   # pie_chart
   view: sales_by_category is {
     group_by: category
     aggregate: total_sales
-    limit: 8
+    limit: 12
   }
 
+  # Pie chart with cost data
   #(story)
   # pie_chart
-  view: sales_by_department is {
+  view: cost_by_department is {
     group_by: department
-    aggregate: total_sales
+    aggregate: total_cost
     limit: 6
   }
 
-  #(story)
-  # pie_chart
-  view: products_by_brand is {
-    group_by: brand
-    aggregate: product_count
-    limit: 8
-  }
-
+  # Pie chart with margin analysis
   #(story)
   # pie_chart
   view: margin_by_category is {
@@ -50,10 +79,51 @@ source: products is duckdb.table("static/data/products.parquet") extend {
     limit: 6
   }
 
+  # Product count distribution
   #(story)
   # pie_chart
-  view: products_by_category is {
-    group_by: category
+  view: products_by_brand is {
+    group_by: brand
     aggregate: product_count
+    limit: 8
+  }
+
+  # Average price by category
+  #(story)
+  # pie_chart
+  view: avg_price_by_category is {
+    group_by: category
+    aggregate: avg_price
+    limit: 7
+  }
+
+  # Small dataset pie chart
+  #(story)
+  # pie_chart
+  view: top_departments is {
+    group_by: department
+    aggregate: total_sales
+    limit: 4
+  }
+
+  # Pie chart with custom field selection
+  #(story)
+  # pie_chart { category=category value=revenue }
+  view: revenue_breakdown is {
+    group_by: category
+    aggregate: 
+      revenue is total_sales
+      margin is avg_margin
+    limit: 6
+  }
+
+  # Pie chart showing product distribution
+  #(story)
+  # pie_chart
+  view: product_distribution is {
+    group_by: brand
+    aggregate: product_count
+    order_by: product_count desc
+    limit: 10
   }
 } 
