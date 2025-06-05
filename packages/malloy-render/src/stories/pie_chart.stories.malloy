@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+source: products is duckdb.table("static/data/products.parquet") extend {
+  measure: total_sales is retail_price.sum()
+  measure: avg_margin is avg(retail_price - cost)
+  measure: product_count is count()
+
+  #(story)
+  # pie_chart
+  view: sales_by_brand is {
+    group_by: brand
+    aggregate: total_sales
+    limit: 10
+  }
+
+  #(story)
+  # pie_chart
+  view: sales_by_category is {
+    group_by: category
+    aggregate: total_sales
+    limit: 8
+  }
+
+  #(story)
+  # pie_chart
+  view: sales_by_department is {
+    group_by: department
+    aggregate: total_sales
+    limit: 6
+  }
+
+  #(story)
+  # pie_chart
+  view: products_by_brand is {
+    group_by: brand
+    aggregate: product_count
+    limit: 8
+  }
+
+  #(story)
+  # pie_chart
+  view: margin_by_category is {
+    group_by: category
+    aggregate: avg_margin
+    limit: 6
+  }
+
+  #(story)
+  # pie_chart
+  view: products_by_category is {
+    group_by: category
+    aggregate: product_count
+  }
+} 

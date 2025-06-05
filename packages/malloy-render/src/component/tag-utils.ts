@@ -8,10 +8,10 @@
 import type {Tag} from '@malloydata/malloy-tag';
 
 // Legacy chart tags that need to be converted
-const LEGACY_CHART_TAGS = ['bar_chart', 'line_chart'];
+const LEGACY_CHART_TAGS = ['bar_chart', 'line_chart', 'pie_chart'];
 
 // Valid viz values that map to charts
-export const VIZ_CHART_TYPES = ['bar', 'line'];
+export const VIZ_CHART_TYPES = ['bar', 'line', 'pie'];
 
 /**
  * Convert legacy chart tag names to viz format
@@ -20,6 +20,7 @@ function legacyTagToVizType(legacyTag: string): string {
   const legacyMap: Record<string, string> = {
     'bar_chart': 'bar',
     'line_chart': 'line',
+    'pie_chart': 'pie',
     'table': 'table',
     'dashboard': 'dashboard',
   };

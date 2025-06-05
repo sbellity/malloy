@@ -30,6 +30,7 @@ import {generateBarChartVegaSpec} from './bar-chart/generate-bar_chart-vega-spec
 import type {ResultStore} from './result-store/result-store';
 import {createResultStore} from './result-store/result-store';
 import {generateLineChartVegaSpec} from './line-chart/generate-line_chart-vega-spec';
+import {generatePieChartVegaSpec} from './pie-chart/generate-pie_chart-vega-spec';
 import type {Config, Runtime} from 'vega';
 import {parse} from 'vega';
 import {
@@ -106,7 +107,6 @@ function populateAllVegaSpecs(
 
 export function shouldRenderChartAs(tag: Tag): string | undefined {
   const normalizedTag = convertLegacyToVizTag(tag);
-
   return getChartTypeFromNormalizedTag(normalizedTag);
 }
 
@@ -129,6 +129,8 @@ function populateVegaSpec(
       vegaChartProps = generateBarChartVegaSpec(field, metadata);
     } else if (chartType === 'line') {
       vegaChartProps = generateLineChartVegaSpec(field, metadata);
+    } else if (chartType === 'pie') {
+      vegaChartProps = generatePieChartVegaSpec(field, metadata);
     }
   } catch (error) {
     vegaInfo.error = error;
