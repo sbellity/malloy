@@ -15,6 +15,8 @@ export type PieChartSettings = {
   valueChannel: Channel;
   interactive: boolean;
   hideReferences: boolean;
+  isDonut: boolean;
+  innerRadiusSize: 'small' | 'medium' | 'large';
 };
 
 export function getPieChartSettings(
@@ -27,6 +29,35 @@ export function getPieChartSettings(
   const interactive = !tag.has('tooltip');
   const isSpark =
     chart?.text('size') === 'spark' || tag.text('size') === 'spark';
+  
+  // Check for donut type
+  const isDonut = 
+    chart?.text('type') === 'donut' || 
+    chart?.text('style') === 'donut' ||
+    tag.text('type') === 'donut' ||
+    tag.text('style') === 'donut';
+  
+  // Get inner radius size (only relevant for donuts)
+  const innerRadiusText = 
+    chart?.text('innerRadius') || 
+    chart?.text('inner_radius') ||
+    chart?.text('hole') ||
+    tag.text('innerRadius') ||
+    tag.text('inner_radius') ||
+    tag.text('hole');
+  
+  let innerRadiusSize: 'small' | 'medium' | 'large' = 'medium';
+  if (innerRadiusText) {
+    const size = innerRadiusText.toLowerCase();
+    if (size === 'small' || size === 's') {
+      innerRadiusSize = 'small';
+    } else if (size === 'large' || size === 'l') {
+      innerRadiusSize = 'large';
+    } else if (size === 'medium' || size === 'm') {
+      innerRadiusSize = 'medium';
+    }
+  }
+  
   if (!chart) {
     throw new Error(
       'Tried to render a pie_chart, but no pie_chart tag was found'
@@ -107,5 +138,7 @@ export function getPieChartSettings(
     valueChannel,
     interactive,
     hideReferences: isSpark,
+    isDonut: isDonut,
+    innerRadiusSize: innerRadiusSize,
   };
 } 

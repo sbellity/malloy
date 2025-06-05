@@ -14,60 +14,50 @@ source: products is duckdb.table("static/data/products.parquet") extend {
   measure: max_price is retail_price.max()
   measure: min_price is retail_price.min()
 
-  # Basic KPI - auto-detected fields (first numeric = value, second = change)
   #(story)
+  # Auto-Detection: First numeric field becomes value, second becomes change
   # kpi
-  view: basic_sales_kpi is {
-    aggregate: 
-      total_sales
-      avg_price
-    limit: 1
-  }
-
-  # KPI with explicit field mapping
-  #(story)
-  # kpi { value=total_sales change=product_count }
-  view: sales_with_count_change is {
+  view: auto_detection_example is {
     aggregate: 
       total_sales
       product_count
-      avg_price
     limit: 1
   }
 
-  # KPI with custom title
   #(story)
-  # kpi { title="Monthly Revenue" }
-  view: revenue_kpi_with_title is {
+  # Single Value: KPI with only one metric (no change indicator)
+  # kpi
+  view: single_value_example is {
+    aggregate: total_sales
+    limit: 1
+  }
+
+  #(story)
+  # Explicit Value Field: Specify which field to use as the main value
+  # kpi { value=avg_price }
+  view: explicit_value_example is {
+    aggregate: 
+      avg_price
+      total_sales
+      product_count
+    limit: 1
+  }
+
+  #(story)
+  # Explicit Change Field: Specify which field to use as the change indicator
+  # kpi { change=avg_margin }
+  view: explicit_change_example is {
     aggregate: 
       total_sales
       avg_margin
-    limit: 1
-  }
-
-  # KPI with explicit value and title
-  #(story)
-  # kpi { value=avg_price title="Average Product Price" }
-  view: avg_price_kpi is {
-    aggregate: 
-      avg_price
-      total_sales
       product_count
     limit: 1
   }
 
-  # Single value KPI (no change indicator)
   #(story)
-  # kpi
-  view: total_products_kpi is {
-    aggregate: product_count
-    limit: 1
-  }
-
-  # Cost analysis KPI
-  #(story)
-  # kpi { value=total_cost change=avg_margin title="Total Cost Analysis" }
-  view: cost_analysis_kpi is {
+  # Both Value and Change: Explicitly set both fields
+  # kpi { value=total_cost change=avg_margin }
+  view: explicit_both_example is {
     aggregate: 
       total_cost
       avg_margin
@@ -75,65 +65,54 @@ source: products is duckdb.table("static/data/products.parquet") extend {
     limit: 1
   }
 
-  # Price range KPI
   #(story)
-  # kpi { value=max_price change=min_price title="Price Range" }
-  view: price_range_kpi is {
+  # Custom Title: Add a descriptive title to the KPI
+  # kpi { title="Monthly Revenue Performance" }
+  view: custom_title_example is {
+    aggregate: 
+      total_sales
+      avg_margin
+    limit: 1
+  }
+
+  #(story)
+  # Title with Explicit Fields: Combine custom title with field specification
+  # kpi { value=avg_price change=product_count title="Average Price Analysis" }
+  view: title_with_fields_example is {
+    aggregate: 
+      avg_price
+      product_count
+      total_sales
+    limit: 1
+  }
+
+  #(story)
+  # Positive Change Indicator: Example showing positive growth
+  # kpi { value=max_price change=avg_price title="Price Growth" }
+  view: positive_change_example is {
+    aggregate: 
+      max_price
+      avg_price
+    limit: 1
+  }
+
+  #(story)
+  # Negative Change Indicator: Example showing decline
+  # kpi { value=max_price change=min_price title="Price Decline" }
+  view: negative_change_example is {
     aggregate: 
       max_price
       min_price
-      avg_price
     limit: 1
   }
 
-  # Margin KPI with sales change
   #(story)
-  # kpi { value=avg_margin change=total_sales title="Profit Margin" }
-  view: margin_kpi is {
-    aggregate: 
-      avg_margin
-      total_sales
-    limit: 1
-  }
-
-  # Multiple metrics KPI (auto-detection)
-  #(story)
-  # kpi
-  view: business_overview_kpi is {
+  # Multiple Metrics Display: Show multiple KPIs from same data
+  # kpi { title="Business Overview Dashboard" }
+  view: multiple_metrics_example is {
     aggregate: 
       total_sales
       product_count
-      avg_margin
-      total_cost
-    limit: 1
-  }
-
-  # Sales performance KPI
-  #(story)
-  # kpi { value=total_sales title="Sales Performance" }
-  view: sales_performance_kpi is {
-    aggregate: 
-      total_sales
-      avg_price
-    limit: 1
-  }
-
-  # Product metrics KPI
-  #(story)
-  # kpi { value=product_count change=avg_price title="Product Metrics" }
-  view: product_metrics_kpi is {
-    aggregate: 
-      product_count
-      avg_price
-      total_sales
-    limit: 1
-  }
-
-  # Cost efficiency KPI
-  #(story)
-  # kpi { value=avg_margin change=total_cost title="Cost Efficiency" }
-  view: cost_efficiency_kpi is {
-    aggregate: 
       avg_margin
       total_cost
     limit: 1

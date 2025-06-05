@@ -12,118 +12,161 @@ source: products is duckdb.table("static/data/products.parquet") extend {
   measure: total_cost is cost.sum()
   measure: avg_price is retail_price.avg()
 
-  # Basic pie chart - auto-detected fields
   #(story)
+  # Auto-Detection: First dimension and first measure automatically used
   # pie_chart
-  view: basic_sales_by_brand is {
+  view: auto_detection_example is {
     group_by: brand
     aggregate: total_sales
-    limit: 10
+    limit: 8
   }
 
-  # Pie chart with explicit field mapping
   #(story)
-  # pie_chart { category=category value=total_sales }
-  view: explicit_category_value is {
+  # Explicit Category Field: Specify which field to use for pie slices
+  # pie_chart { category=category }
+  view: explicit_category_example is {
     group_by: category
     aggregate: 
       total_sales
       product_count
-    limit: 8
-  }
-
-  # Small/spark pie chart
-  #(story)
-  # pie_chart { size=spark }
-  view: spark_pie_chart is {
-    group_by: department
-    aggregate: total_sales
-    limit: 5
-  }
-
-  # Pie chart with embedded field tags
-  #(story)
-  # pie_chart
-  view: embedded_tags_example is {
-    group_by: brand # category
-    aggregate: 
-      revenue is total_sales # value
-      items is product_count
-    limit: 8
-  }
-
-  # Large dataset pie chart
-  #(story)
-  # pie_chart
-  view: sales_by_category is {
-    group_by: category
-    aggregate: total_sales
-    limit: 12
-  }
-
-  # Pie chart with cost data
-  #(story)
-  # pie_chart
-  view: cost_by_department is {
-    group_by: department
-    aggregate: total_cost
     limit: 6
   }
 
-  # Pie chart with margin analysis
   #(story)
-  # pie_chart
-  view: margin_by_category is {
-    group_by: category
-    aggregate: avg_margin
-    limit: 6
-  }
-
-  # Product count distribution
-  #(story)
-  # pie_chart
-  view: products_by_brand is {
+  # Explicit Value Field: Specify which field to use for slice sizes
+  # pie_chart { value=product_count }
+  view: explicit_value_example is {
     group_by: brand
-    aggregate: product_count
-    limit: 8
-  }
-
-  # Average price by category
-  #(story)
-  # pie_chart
-  view: avg_price_by_category is {
-    group_by: category
-    aggregate: avg_price
+    aggregate: 
+      total_sales
+      product_count
     limit: 7
   }
 
-  # Small dataset pie chart
   #(story)
-  # pie_chart
-  view: top_departments is {
+  # Both Category and Value: Explicitly set both fields
+  # pie_chart { category=department value=avg_margin }
+  view: explicit_both_example is {
     group_by: department
+    aggregate: 
+      avg_margin
+      total_sales
+    limit: 5
+  }
+
+  #(story)
+  # Spark Size: Small pie chart for embedding in dashboards
+  # pie_chart { size=spark }
+  view: spark_size_example is {
+    group_by: category
     aggregate: total_sales
     limit: 4
   }
 
-  # Pie chart with custom field selection
   #(story)
-  # pie_chart { category=category value=revenue }
-  view: revenue_breakdown is {
-    group_by: category
-    aggregate: 
-      revenue is total_sales
-      margin is avg_margin
+  # Basic Donut Chart: Pie chart with a hole in the center
+  # pie_chart { type=donut }
+  view: basic_donut_example is {
+    group_by: brand
+    aggregate: total_sales
     limit: 6
   }
 
-  # Pie chart showing product distribution
   #(story)
-  # pie_chart
-  view: product_distribution is {
+  # Small Donut Hole: Donut with small inner radius (1/8 of chart size)
+  # pie_chart { type=donut hole=small }
+  view: small_donut_hole_example is {
+    group_by: department
+    aggregate: total_cost
+    limit: 4
+  }
+
+  #(story)
+  # Medium Donut Hole: Donut with medium inner radius (1/6 of chart size)
+  # pie_chart { style=donut innerRadius=medium }
+  view: medium_donut_hole_example is {
+    group_by: category
+    aggregate: avg_price
+    limit: 5
+  }
+
+  #(story)
+  # Large Donut Hole: Donut with large inner radius (1/4 of chart size)
+  # pie_chart { type=donut inner_radius=large }
+  view: large_donut_hole_example is {
     group_by: brand
+    aggregate: avg_margin
+    limit: 7
+  }
+
+  #(story)
+  # Short Form Hole Sizes: Using abbreviated size indicators
+  # pie_chart { style=donut hole=s }
+  view: short_form_small_hole is {
+    group_by: department
     aggregate: product_count
+    limit: 3
+  }
+
+  #(story)
+  # Large Hole Short Form: Using 'l' for large hole size
+  # pie_chart { type=donut innerRadius=l }
+  view: short_form_large_hole is {
+    group_by: category
+    aggregate: total_cost
+    limit: 6
+  }
+
+  #(story)
+  # Spark Donut Chart: Small donut chart for compact display
+  # pie_chart { type=donut size=spark hole=medium }
+  view: spark_donut_example is {
+    group_by: brand
+    aggregate: avg_price
+    limit: 4
+  }
+
+  #(story)
+  # Data Limiting: Showing top categories with limit
+  # pie_chart
+  view: data_limiting_example is {
+    group_by: brand
+    aggregate: total_sales
+    order_by: total_sales desc
+    limit: 5
+  }
+
+  #(story)
+  # Cost Analysis: Using cost data instead of sales
+  # pie_chart { category=department value=total_cost }
+  view: cost_analysis_example is {
+    group_by: department
+    aggregate: 
+      total_cost
+      total_sales
+    limit: 6
+  }
+
+  #(story)
+  # Margin Distribution: Analyzing profit margins by category
+  # pie_chart { value=avg_margin }
+  view: margin_distribution_example is {
+    group_by: category
+    aggregate: 
+      avg_margin
+      total_sales
+    limit: 7
+  }
+
+  #(story)
+  # Product Count Distribution: Show distribution by item count
+  # pie_chart { category=brand value=product_count }
+  view: product_count_distribution is {
+    group_by: brand
+    aggregate: 
+      product_count
+      total_sales
     order_by: product_count desc
-    limit: 10
+    limit: 8
   }
 } 

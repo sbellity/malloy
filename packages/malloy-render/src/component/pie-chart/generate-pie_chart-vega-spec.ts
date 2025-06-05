@@ -196,6 +196,16 @@ export function generatePieChartVegaSpec(
       name: 'brushOut',
       value: [],
     },
+    {
+      name: 'innerRadius',
+      update: settings.isDonut 
+        ? settings.innerRadiusSize === 'small' 
+          ? 'min(width, height) / 8'
+          : settings.innerRadiusSize === 'large'
+          ? 'min(width, height) / 4'
+          : 'min(width, height) / 6'  // medium
+        : '0',
+    },
   ];
 
   const marks: Mark[] = [
@@ -211,7 +221,7 @@ export function generatePieChartVegaSpec(
         update: {
           startAngle: {field: 'startAngle'},
           endAngle: {field: 'endAngle'},
-          innerRadius: {value: 0},
+          innerRadius: {signal: 'innerRadius'},
           outerRadius: {signal: 'min(width, height) / 2 - 10'},
           stroke: {value: 'white'},
           strokeWidth: {value: 2},
